@@ -1,9 +1,6 @@
 # 🛰️ OverWatch – Your Intelligent Productivity App
 
-![License](https://img.shields.io/badge/license-MIT-green)  
-![Status](https://img.shields.io/badge/status-in%20development-yellow)  
-![Node.js](https://img.shields.io/badge/Node.js-18.x-brightgreen)  
-![React Native](https://img.shields.io/badge/React%20Native-in%20progress-blue)  
+![License](https://img.shields.io/badge/license-MIT-green) ![Status](https://img.shields.io/badge/status-in%20development-yellow)  ![Node.js](https://img.shields.io/badge/Node.js-18.x-brightgreen) ![React Native](https://img.shields.io/badge/React%20Native-in%20progress-blue)  
 
 ## 📖 About the Project
 **OverWatch** aims to be **intelligent productivity app** that works as an advanced agenda.  
