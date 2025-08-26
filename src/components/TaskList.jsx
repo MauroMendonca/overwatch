@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 
+// ...existing code...
 export default function TaskList({ tasks = [], onDelete, onUpdate, onToggleComplete }) {
     const [selectedTask, setSelectedTask] = useState(null);
     const [completedMap, setCompletedMap] = useState({});
@@ -13,11 +14,17 @@ export default function TaskList({ tasks = [], onDelete, onUpdate, onToggleCompl
     }, [tasks]);
 
     function toggleComplete(taskId, value) {
+        // optimistic UI update
         setCompletedMap(prev => ({ ...prev, [taskId]: value }));
+
+        const task = (tasks || []).find(t => t._id === taskId);
+
         if (onToggleComplete) {
             try {
-                onToggleComplete(taskId, value);
+                // pass title as meta so parent can include it in API payload if needed
+                onToggleComplete(taskId, value, { title: task?.title || "" });
             } catch (err) {
+                // rollback on error
                 setCompletedMap(prev => ({ ...prev, [taskId]: !value }));
                 console.error("onToggleComplete failed:", err);
             }
@@ -73,70 +80,73 @@ export default function TaskList({ tasks = [], onDelete, onUpdate, onToggleCompl
                             <li
                                 key={task._id}
                                 onClick={() => setSelectedTask({ ...task, tags: Array.isArray(task.tags) ? task.tags.join(", ") : (task.tags || "") })}
-                                className="flex items-start justify-between gap-4 p-3 rounded-lg bg-[var(--panel)] border border-[var(--border)] hover:border-[var(--accent)] transition-colors cursor-pointer"
+                                className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 p-3 rounded-lg bg-[var(--panel)] border border-[var(--border)] hover:border-[var(--accent)] transition-colors cursor-pointer"
                             >
-                                {/* left: checkbox */}
-                                <div className="flex items-center" onClick={(e) => e.stopPropagation()}>
-                                    <input
-                                        type="checkbox"
-                                        checked={completed}
-                                        onChange={(e) => {
-                                            e.stopPropagation();
-                                            toggleComplete(task._id, e.target.checked);
-                                        }}
-                                        className="h-5 w-5 rounded-lg"
-                                        style={{ accentColor: "var(--accent)" }}
-                                        aria-label={`Marcar ${task.title} como concluída`}
-                                    />
-                                </div>
+                                {/* left: checkbox + title (priority & tags moved below title) */}
+                                <div className="flex items-start w-full md:w-auto gap-3" onClick={(e) => e.stopPropagation()}>
+                                    <label className="flex items-start gap-3 pt-1">
+                                        <input
+                                            type="checkbox"
+                                            checked={completed}
+                                            onChange={(e) => {
+                                                e.stopPropagation();
+                                                toggleComplete(task._id, e.target.checked);
+                                            }}
+                                            className="h-6 w-6 rounded focus:ring-2 focus:ring-[var(--accent)]"
+                                            style={{ accentColor: "var(--accent)" }}
+                                            aria-label={`Marcar ${task.title} como concluída`}
+                                        />
+                                    </label>
 
-                                {/* center: title + badges */}
-                                <div className="flex-1 min-w-0">
-                                    <div className="flex items-center gap-3">
+                                    <div className="min-w-0">
                                         <h3
                                             className={`text-sm font-medium truncate ${completed ? "line-through opacity-60" : ""}`}
                                             style={{ color: "var(--text)" }}
                                         >
                                             {task.title}
                                         </h3>
-                                    </div>
+                                        <div className="mt-1 text-xs text-[var(--muted)]">{task.description || ""}</div>
 
-                                    <div className="mt-2 flex flex-wrap items-center gap-2">
-                                        <span
-                                            className={`text-xs font-semibold px-2 py-1 rounded-full ${priorityClasses[task.priority || "medium"]}`}
-                                        >
-                                            {task.priority ? task.priority.toUpperCase() : "MEDIUM"}
-                                        </span>
-
-                                        {task.tags && task.tags.length > 0 ? (
-                                            task.tags.map((tag, idx) => (
-                                                <span
-                                                    key={idx}
-                                                    className="text-xs px-2 py-1 rounded-full bg-[var(--card)] text-[var(--text)] border border-[var(--border)]"
-                                                >
-                                                    {tag}
-                                                </span>
-                                            ))
-                                        ) : (
-                                            <span className="text-xs px-2 py-1 rounded-full bg-transparent text-[var(--muted)]">
-                                                sem categorias
+                                        {/* priority + tags: moved below title */}
+                                        <div className="mt-2 flex flex-wrap items-center gap-2">
+                                            <span
+                                                className={`text-xs font-semibold px-2 py-1 rounded-full ${priorityClasses[task.priority || "medium"]}`}
+                                            >
+                                                {task.priority ? task.priority.toUpperCase() : "MEDIUM"}
                                             </span>
-                                        )}
+
+                                            {task.tags && task.tags.length > 0 ? (
+                                                task.tags.map((tag, idx) => (
+                                                    <span
+                                                        key={idx}
+                                                        className="text-xs px-2 py-1 rounded-full bg-[var(--card)] text-[var(--text)] border border-[var(--border)]"
+                                                    >
+                                                        {tag}
+                                                    </span>
+                                                ))
+                                            ) : (
+                                                <span className="text-xs px-2 py-1 rounded-full bg-transparent text-[var(--muted)]">
+                                                    sem categorias
+                                                </span>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
 
-                                {/* right: date + delete */}
-                                <div className="flex flex-col items-end justify-between">
-                                    <div className="text-xs text-[var(--muted)]">{formattedDate}</div>
+                                {/* right: date + actions (stacked on mobile, inline on md) */}
+                                <div className="w-full md:w-auto flex flex-col md:flex-row items-stretch md:items-center gap-2 md:gap-3 mt-2 md:mt-0">
+                                    <div className="text-xs text-[var(--muted)] md:text-right">{formattedDate}</div>
 
-                                    <div className="mt-2 flex items-center gap-2">
+                                    <div className="flex md:flex-col items-center gap-2">
                                         <button
                                             onClick={(e) => { e.stopPropagation(); onDelete && onDelete(task._id); }}
-                                            className="text-sm px-2 py-1 rounded-md bg-red-600 hover:bg-red-700 text-white transition"
+                                            className="w-full md:w-auto text-sm px-3 py-2 rounded-md bg-red-600 hover:bg-red-700 text-white transition"
                                             aria-label={`Deletar ${task.title}`}
                                         >
                                             Delete
                                         </button>
+
+                                        {/* Edit button removed as requested */}
                                     </div>
                                 </div>
                             </li>
@@ -147,14 +157,14 @@ export default function TaskList({ tasks = [], onDelete, onUpdate, onToggleCompl
 
             {/* edit modal/drawer (non blocking) */}
             {selectedTask && (
-                <div className="fixed inset-0 flex items-center justify-center pointer-events-none z-50">
+                <div className="fixed inset-0 flex items-center justify-center pointer-events-none z-50 p-4">
                     <div
                         className="absolute inset-0 bg-black bg-opacity-40"
                         onClick={() => setSelectedTask(null)}
                     />
                     <form
                         onSubmit={handleSaveEdited}
-                        className="relative pointer-events-auto bg-[var(--card)] border border-[var(--border)] rounded-lg p-4 w-full max-w-md shadow-lg z-10"
+                        className="relative pointer-events-auto bg-[var(--card)] border border-[var(--border)] rounded-lg p-4 w-full max-w-lg shadow-lg z-10"
                         onClick={(e) => e.stopPropagation()}
                     >
                         <div className="flex items-center justify-between mb-3">
@@ -170,7 +180,7 @@ export default function TaskList({ tasks = [], onDelete, onUpdate, onToggleCompl
                             required
                         />
 
-                        <div className="grid grid-cols-2 gap-3">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                             <div>
                                 <label className="block text-xs mb-1" style={{ color: "var(--text)" }}>Prioridade</label>
                                 <select
@@ -202,17 +212,17 @@ export default function TaskList({ tasks = [], onDelete, onUpdate, onToggleCompl
                             onChange={(e) => setSelectedTask((s) => ({ ...s, tags: e.target.value }))}
                         />
 
-                        <div className="flex justify-end mt-4 gap-2">
+                        <div className="flex flex-col-reverse md:flex-row justify-end mt-4 gap-2">
                             <button
                                 type="button"
                                 onClick={() => setSelectedTask(null)}
-                                className="px-3 py-1 rounded-md border border-[var(--border)] text-[var(--text)] hover:bg-[var(--panel)] transition"
+                                className="w-full md:w-auto px-4 py-2 rounded-md border border-[var(--border)] text-[var(--text)] hover:bg-[var(--panel)] transition"
                             >
                                 Cancel
                             </button>
                             <button
                                 type="submit"
-                                className="px-3 py-1 rounded-md text-black font-semibold transition"
+                                className="w-full md:w-auto px-4 py-2 rounded-md text-black font-semibold transition"
                                 style={{ backgroundColor: "var(--accent)" }}
                             >
                                 Save
