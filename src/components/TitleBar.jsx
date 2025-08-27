@@ -1,139 +1,281 @@
 import React, { useState, useRef, useEffect } from "react";
+import { Link } from "react-router-dom";
 import ThemeToggle from './ThemeToggle';
 import logoMini from "../assets/logo_overwatch_mini.png";
-// ...existing code...
 
 export default function TitleBar({ user, onLogout }) {
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(false); // user menu / desktop menu toggle
+    const [sidebarOpen, setSidebarOpen] = useState(false); // navigation sidebar
     const wrapperRef = useRef(null);
-    const drawerRef = useRef(null); // <--- novo: ref para o drawer mobile
+    const drawerRef = useRef(null);
+    const hamburgerRef = useRef(null);
 
     useEffect(() => {
         function handleOutside(e) {
-            // se o click aconteceu dentro do menu desktop (wrapperRef) ou do drawer mobile (drawerRef), não fecha
-            if (wrapperRef.current && wrapperRef.current.contains(e.target)) return;
-            if (drawerRef.current && drawerRef.current.contains(e.target)) return;
-            // caso contrário fecha
+            const target = e.target; // fix: use defined variable
+            if (wrapperRef.current && wrapperRef.current.contains(target)) return;
+            if (drawerRef.current && drawerRef.current.contains(target)) return;
+            if (hamburgerRef.current && hamburgerRef.current.contains(target)) return;
+            // close both menus if clicked outside
             setOpen(false);
+            setSidebarOpen(false);
         }
-        document.addEventListener("mousedown", handleOutside);
-        return () => document.removeEventListener("mousedown", handleOutside);
+        document.addEventListener("click", handleOutside);
+        return () => document.removeEventListener("click", handleOutside);
     }, []);
 
+    const NavLink = ({ to, label, icon }) => (
+        <Link
+            to={to}
+            className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-[var(--panel)] transition text-[var(--text)]"
+            onClick={() => setSidebarOpen(false)}
+        >
+            <span className="w-5 h-5 flex items-center justify-center">{icon}</span>
+            {/* Alterado para exibir no mobile também */}
+            <span className="inline">{label}</span>
+        </Link>
+    );
+
     return (
-        <header className="w-full bg-[var(--panel)] px-4 py-3 flex items-center justify-between shadow-md fixed top-0 left-0 z-50 border-b border-[var(--border)]">
-            {/* left: hamburger (mobile) + logo + title */}
-            <div className="flex items-center gap-3">
-                {/* hamburger: visible only on small screens */}
-                <button
-                    onClick={() => setOpen(true)}
-                    className="md:hidden p-2 rounded-lg hover:bg-[var(--card)] text-[var(--text)] border border-transparent hover:border-[var(--border)] transition"
-                    aria-label="Abrir menu"
-                >
-                    <span className="text-lg">☰</span>
-                </button>
-
-                <img src={logoMini} alt="Logo" className="w-8 h-8 object-contain" />
-
-                {/* app title: compact on mobile, larger on md+ */}
-                <div className="text-sm md:text-xl font-bold text-[var(--text)] truncate">OverWatch</div>
-            </div>
-
-            {/* right: theme toggle + user/menu */}
-            <div className="flex items-center gap-3">
-                <ThemeToggle />
-
-                {/* desktop user button */}
-                <div className="relative hidden md:block" ref={wrapperRef}>
-                    <button
-                        onClick={() => setOpen((v) => !v)}
-                        aria-haspopup="true"
-                        aria-expanded={open}
-                        className="flex items-center gap-2 px-3 py-1 rounded-lg bg-[var(--card)] hover:bg-[var(--panel)] text-[var(--text)] border border-[var(--border)] transition"
+        <>
+            {/* Left collapsible sidebar: mobile off-canvas + desktop collapsible */}
+            {/* Mobile off-canvas */}
+            {sidebarOpen && (
+                <div className="fixed inset-0 z-60 md:hidden" aria-hidden="true">
+                    <div
+                        className="absolute inset-0 bg-black/40"
+                        onClick={() => setSidebarOpen(false)}
+                    />
+                    {/* place drawer below header: top-14 (header height) and bottom-0 so content isn't hidden behind titlebar */}
+                    <aside
+                        className="absolute left-0 top-14 bottom-0 w-72 bg-[var(--card)] border-r border-[var(--border)] p-4 shadow-xl z-60"
+                        ref={drawerRef}
                     >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[var(--text)]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                            <path d="M12 12c2.761 0 5-2.239 5-5s-2.239-5-5-5-5 2.239-5 5 2.239 5 5 5z" />
-                            <path d="M4 20c0-2.21 3.582-4 8-4s8 1.79 8 4v1H4v-1z" />
-                        </svg>
-                    </button>
-
-                    {open && (
-                        <div className="absolute right-0 mt-2 w-64 bg-[var(--card)] border border-[var(--border)] rounded-lg shadow-lg p-4 text-[var(--text)] z-50">
-                            <div className="flex items-center gap-3">
-                                <div className="h-10 w-10 rounded-full bg-[var(--panel)] flex items-center justify-center text-[var(--text)]">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                                        <path d="M12 12c2.761 0 5-2.239 5-5s-2.239-5-5-5-5 2.239-5 5 2.239 5 5 5z" />
-                                        <path d="M4 20c0-2.21 3.582-4 8-4s8 1.79 8 4v1H4v-1z" />
-                                    </svg>
+                        <div className="flex items-center gap-3 mb-4">
+                            <img src={logoMini} alt="Logo" className="w-8 h-8 object-contain" />
+                            <div>
+                                <div className="text-sm font-semibold text-[var(--text)]">
+                                    {user?.name || "User"}
                                 </div>
-
-                                <div className="flex-1">
-                                    <div className="text-sm font-semibold text-[var(--text)]">{user?.name || "Usuário"}</div>
-                                    <div className="text-xs text-[var(--muted)]">{user?.email || "email@exemplo.com"}</div>
-                                </div>
+                                <div className="text-xs text-[var(--muted)]">{user?.email || ""}</div>
                             </div>
+                        </div>
 
-                            <div className="mt-4 flex justify-end">
+                        <nav className="flex flex-col gap-1">
+                            <NavLink
+                                to="/dashboard"
+                                label="Dashboard"
+                                icon={
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        className="h-4 w-4"
+                                        viewBox="0 0 24 24"
+                                        fill="currentColor"
+                                    >
+                                        <path d="M3 13h8V3H3v10zM3 21h8v-6H3v6zM13 21h8V11h-8v10zM13 3v6h8V3h-8z" />
+                                    </svg>
+                                }
+                            />
+                            <NavLink
+                                to="/myday"
+                                label="My Day"
+                                icon={
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        className="h-4 w-4"
+                                        viewBox="0 0 24 24"
+                                        fill="currentColor"
+                                    >
+                                        <path d="M12 2l2.09 6.26L20 9.27l-5 3.64L16.18 20 12 16.9 7.82 20 9 12.91l-5-3.64 5.91-.99L12 2z" />
+                                    </svg>
+                                }
+                            />
+                        </nav>
+
+                        <div className="mt-6">
+                            <button
+                                onClick={() => {
+                                    setSidebarOpen(false);
+                                    onLogout && onLogout();
+                                }}
+                                className="w-full text-left px-3 py-2 rounded-md btn-accent"
+                            >
+                                Logout
+                            </button>
+                        </div>
+                    </aside>
+                </div>
+            )}
+
+            {/* Desktop sidebar: render only when sidebarOpen so menu "sumir" when closed */}
+            {sidebarOpen && (
+                <aside className="hidden md:flex md:flex-col md:fixed md:top-0 md:left-0 md:h-full z-30 bg-[var(--card)] border-r border-[var(--border)] transition-all md:w-56">
+                    <div className="flex flex-col h-full">
+                        <div className="flex items-center gap-3 p-3">
+                            <img src={logoMini} alt="Logo" className="w-8 h-8 object-contain" />
+                            <div className="text-sm font-bold text-[var(--text)]">OverWatch</div>
+                        </div>
+
+                        <nav className="flex-1 px-1 space-y-1">
+                            <NavLink
+                                to="/dashboard"
+                                label="Dashboard"
+                                icon={
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        className="h-4 w-4"
+                                        viewBox="0 0 24 24"
+                                        fill="currentColor"
+                                    >
+                                        <path d="M3 13h8V3H3v10zM3 21h8v-6H3v6zM13 21h8V11h-8v10zM13 3v6h8V3h-8z" />
+                                    </svg>
+                                }
+                            />
+                            <NavLink
+                                to="/myday"
+                                label="My Day"
+                                icon={
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        className="h-4 w-4"
+                                        viewBox="0 0 24 24"
+                                        fill="currentColor"
+                                    >
+                                        <path d="M12 2l2.09 6.26L20 9.27l-5 3.64L16.18 20 12 16.9 7.82 20 9 12.91l-5-3.64 5.91-.99L12 2z" />
+                                    </svg>
+                                }
+                            />
+                        </nav>
+
+                        <div className="p-3">
+                            <div className="flex items-center gap-2">
                                 <button
-                                    onClick={() => { setOpen(false); onLogout && onLogout(); }}
-                                    className="px-3 py-1 rounded-lg font-semibold btn-accent"
+                                    onClick={() => setSidebarOpen(false)}
+                                    className="p-2 rounded-md hover:bg-[var(--panel)] transition text-[var(--text)]"
+                                    aria-label="Close sidebar"
+                                >
+                                    «
+                                </button>
+                                <button
+                                    onClick={() => onLogout && onLogout()}
+                                    className="ml-auto px-3 py-2 rounded-md btn-accent"
                                 >
                                     Logout
                                 </button>
                             </div>
                         </div>
-                    )}
-                </div>
+                    </div>
+                </aside>
+            )}
 
-                {/* mobile user/avatar button: visible only on small screens */}
-                <div className="md:hidden">
+            {/* Header */}
+            <header
+                className={`h-14 w-full bg-[var(--panel)] px-4 py-3 flex items-center justify-between shadow-md fixed top-0 left-0 z-50 border-b border-[var(--border)] ${sidebarOpen ? "md:pl-[14rem]" : "md:pl-16"
+                    }`}
+            >
+                {/* left: mobile hamburger (open sidebar on mobile) + logo + title */}
+                <div className="flex items-center gap-3">
+                    {/* mobile/desktop: toggle navigation */}
                     <button
-                        onClick={() => setOpen(true)}
-                        aria-label="Abrir usuário"
-                        className="p-2 rounded-full bg-[var(--card)] border border-[var(--border)] text-[var(--text)]"
+                        ref={hamburgerRef}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setSidebarOpen((s) => !s);
+                        }}
+                        className="p-2 rounded-lg hover:bg-[var(--card)] text-[var(--text)] border border-transparent hover:border-[var(--border)] transition"
+                        aria-label="Toggle navigation"
                     >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                            <path d="M12 12c2.761 0 5-2.239 5-5s-2.239-5-5-5-5 2.239-5 5 2.239 5 5 5z" />
-                            <path d="M4 20c0-2.21 3.582-4 8-4s8 1.79 8 4v1H4v-1z" />
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z" />
                         </svg>
                     </button>
+
+                    <img src={logoMini} alt="Logo" className="w-8 h-8 object-contain" />
+
+                    <div className="text-sm md:text-xl font-bold text-[var(--text)] truncate">OverWatch</div>
                 </div>
-            </div>
 
-            {/* Mobile drawer / overlay (mobile-first) */}
-            {open && (
-                <div className="fixed inset-0 z-40 md:hidden" aria-hidden="true">
-                    <div
-                        className="absolute inset-0 bg-black/40"
-                        onClick={() => setOpen(false)}
-                    />
-                    <aside ref={drawerRef} className="absolute left-0 top-0 h-full w-72 bg-[var(--card)] border-r border-[var(--border)] p-4 shadow-xl">
-                        <div className="flex items-center gap-3 mb-4">
-                            <img src={logoMini} alt="Logo" className="w-8 h-8 object-contain" />
-                            <div>
-                                <div className="text-sm font-semibold text-[var(--text)]">{user?.name || "Usuário"}</div>
-                                <div className="text-xs text-[var(--muted)]">{user?.email || "email@exemplo.com"}</div>
-                            </div>
-                        </div>
+                {/* right: theme toggle + user/menu */}
+                <div className="flex items-center gap-3">
+                    <ThemeToggle />
 
-                        <nav className="flex flex-col gap-2">
-                            <button
-                                onClick={() => { setOpen(false); onLogout && onLogout(); }}
-                                className="w-full text-left px-3 py-2 rounded-md btn-accent"
+                    <div className="relative hidden md:block" ref={wrapperRef}>
+                        <button
+                            onClick={() => setOpen((v) => !v)}
+                            aria-haspopup="true"
+                            aria-expanded={open}
+                            className="flex items-center gap-2 px-3 py-1 rounded-lg bg-[var(--card)] hover:bg-[var(--panel)] text-[var(--text)] border border-[var(--border)] transition"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-6 w-6 text-[var(--text)]"
+                                viewBox="0 0 24 24"
+                                fill="currentColor"
+                                aria-hidden="true"
                             >
-                                Logout
-                            </button>
+                                <path d="M12 12c2.761 0 5-2.239 5-5s-2.239-5-5-5-5 2.239-5 5 2.239 5 5 5z" />
+                                <path d="M4 20c0-2.21 3.582-4 8-4s8 1.79 8 4v1H4v-1z" />
+                            </svg>
+                        </button>
 
-                            {/* add other mobile nav/actions here if needed */}
-                        </nav>
+                        {open && (
+                            <div className="absolute right-0 mt-2 w-64 bg-[var(--card)] border border-[var(--border)] rounded-lg shadow-lg p-4 text-[var(--text)] z-50">
+                                <div className="flex items-center gap-3">
+                                    <div className="h-10 w-10 rounded-full bg-[var(--panel)] flex items-center justify-center text-[var(--text)]">
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            className="h-6 w-6"
+                                            viewBox="0 0 24 24"
+                                            fill="currentColor"
+                                            aria-hidden="true"
+                                        >
+                                            <path d="M12 12c2.761 0 5-2.239 5-5s-2.239-5-5-5-5 2.239-5 5 2.239 5 5 5z" />
+                                            <path d="M4 20c0-2.21 3.582-4 8-4s8 1.79 8 4v1H4v-1z" />
+                                        </svg>
+                                    </div>
 
-                        <div className="mt-4">
-                            <ThemeToggle />
-                        </div>
-                    </aside>
+                                    <div className="flex-1">
+                                        <div className="text-sm font-semibold text-[var(--text)]">{user?.name || "User"}</div>
+                                        <div className="text-xs text-[var(--muted)]">{user?.email || ""}</div>
+                                    </div>
+                                </div>
+
+                                <div className="mt-4 flex justify-end">
+                                    <button
+                                        onClick={() => {
+                                            setOpen(false);
+                                            onLogout && onLogout();
+                                        }}
+                                        className="px-3 py-1 rounded-lg font-semibold btn-accent"
+                                    >
+                                        Logout
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* mobile user/avatar button */}
+                    <div className="md:hidden">
+                        <button
+                            onClick={() => setOpen(true)}
+                            aria-label="Open user"
+                            className="p-2 rounded-full bg-[var(--card)] border border-[var(--border)] text-[var(--text)]"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-6 w-6"
+                                viewBox="0 0 24 24"
+                                fill="currentColor"
+                                aria-hidden="true"
+                            >
+                                <path d="M12 12c2.761 0 5-2.239 5-5s-2.239-5-5-5-5 2.239-5 5 2.239 5 5 5z" />
+                                <path d="M4 20c0-2.21 3.582-4 8-4s8 1.79 8 4v1H4v-1z" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
-            )}
-        </header>
+            </header>
+        </>
     );
 }
-// ...existing code...

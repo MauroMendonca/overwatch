@@ -41,7 +41,10 @@ export default function Login() {
                             <input className="w-full px-4 py-2 rounded-lg bg-[#232b3b] border border-[#2e3a4e] text-[#e3e8f0] focus:outline-none focus:ring-2 focus:ring-[#3b5bdb] transition" type="password" placeholder="********" value={password} onChange={(e) => setPassword(e.target.value)} required />
                         </div>
                         <button type="submit" className="w-full bg-[#3b5bdb] hover:bg-[#2746a6] text-white font-semibold rounded-lg py-3 mt-2 shadow-md transition">Login</button>
-                        {error && <p className="text-red-400 text-center mt-2">{error}</p>}
+                        {error && <p className="text-red-400 text-center mt-2">{error}</p>}                        
+                        <div className="text-sm text-[#bfc9e0] text-center mt-4">
+                            Don't have an account? <a href="/register" className="text-[#3b5bdb] hover:underline">Sign up</a>
+                        </div>
                     </div>
                 </form>
             </div>
