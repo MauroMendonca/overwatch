@@ -38,12 +38,19 @@ export default function TaskList({ tasks = [], onDelete, onUpdate, onToggleCompl
     };
 
     function formatDateForInput(date) {
+        const options = {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            timeZone: 'UTC'
+        };
+
+        const formattedDate = date
+            ? new Date(date).toLocaleDateString('en-CA', options)
+            : "";
+
         if (!date) return "";
-        const d = new Date(date);
-        const yyyy = d.getFullYear();
-        const mm = String(d.getMonth() + 1).padStart(2, "0");
-        const dd = String(d.getDate()).padStart(2, "0");
-        return `${yyyy}-${mm}-${dd}`;
+        return formattedDate;
     }
 
     async function handleSaveEdited(e) {
@@ -73,7 +80,7 @@ export default function TaskList({ tasks = [], onDelete, onUpdate, onToggleCompl
                             : !!task.done;
 
                         const formattedDate = task.date
-                            ? new Date(task.date).toLocaleDateString()
+                            ? new Date(task.date).toLocaleDateString('pt-BR', { timeZone: 'UTC' })
                             : "No date";
 
                         return (
@@ -145,8 +152,6 @@ export default function TaskList({ tasks = [], onDelete, onUpdate, onToggleCompl
                                         >
                                             Delete
                                         </button>
-
-                                        {/* Edit button removed as requested */}
                                     </div>
                                 </div>
                             </li>
