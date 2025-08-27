@@ -173,11 +173,11 @@ export default function TaskList({ tasks = [], onDelete, onUpdate, onToggleCompl
                         onClick={(e) => e.stopPropagation()}
                     >
                         <div className="flex items-center justify-between mb-3">
-                            <h3 className="text-sm font-semibold" style={{ color: "var(--text)" }}>Editar tarefa</h3>
+                            <h3 className="text-sm font-semibold" style={{ color: "var(--text)" }}>Edit task</h3>
                             <button type="button" onClick={() => setSelectedTask(null)} className="text-[var(--text)] hover:text-red-400">✕</button>
                         </div>
 
-                        <label className="block text-xs mb-1" style={{ color: "var(--text)" }}>Título</label>
+                        <label className="block text-xs mb-1" style={{ color: "var(--text)" }}>Title</label>
                         <input
                             className="w-full px-3 py-2 rounded-md bg-[var(--panel)] border border-[var(--border)] text-[var(--text)] mb-3"
                             value={selectedTask.title}
@@ -187,7 +187,7 @@ export default function TaskList({ tasks = [], onDelete, onUpdate, onToggleCompl
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                             <div>
-                                <label className="block text-xs mb-1" style={{ color: "var(--text)" }}>Prioridade</label>
+                                <label className="block text-xs mb-1" style={{ color: "var(--text)" }}>priority</label>
                                 <select
                                     className="w-full px-2 py-2 rounded-md bg-[var(--panel)] border border-[var(--border)] text-[var(--text)]"
                                     value={selectedTask.priority || "medium"}
@@ -200,7 +200,7 @@ export default function TaskList({ tasks = [], onDelete, onUpdate, onToggleCompl
                             </div>
 
                             <div>
-                                <label className="block text-xs mb-1" style={{ color: "var(--text)" }}>Data</label>
+                                <label className="block text-xs mb-1" style={{ color: "var(--text)" }}>Date</label>
                                 <input
                                     type="date"
                                     className="w-full px-2 py-2 rounded-md bg-[var(--panel)] border border-[var(--border)] text-[var(--text)]"
@@ -210,7 +210,7 @@ export default function TaskList({ tasks = [], onDelete, onUpdate, onToggleCompl
                             </div>
                         </div>
 
-                        <label className="block text-xs mt-3 mb-1" style={{ color: "var(--text)" }}>Categorias (vírgula separado)</label>
+                        <label className="block text-xs mt-3 mb-1" style={{ color: "var(--text)" }}>TAGs (comma separated)</label>
                         <input
                             className="w-full px-3 py-2 rounded-md bg-[var(--panel)] border border-[var(--border)] text-[var(--text)]"
                             value={selectedTask.tags}
