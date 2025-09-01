@@ -4,6 +4,7 @@ import TitleBar from "../components/TitleBar";
 import { fetchUser } from "../services/authService";
 import CreateTaskForm from "../components/CreatTaskForm";
 import TaskContainer from "../components/TaskContainer";
+import { SunMedium } from "lucide-react";
 
 export default function MyDay() {
     const token = localStorage.getItem("jwt_token");
@@ -29,7 +30,7 @@ export default function MyDay() {
             const formatedTomorow = `${tYear}-${tMonth}-${tDay}`;
 
             try {
-                const data = await getTasks({ starDate: formatedDate,   endDate: formatedTomorow,  sort: "date", order: "desc" });
+                const data = await getTasks({ starDate: formatedDate, endDate: formatedTomorow, sort: "date", order: "desc" });
                 setTasks(data || []);
             } catch (err) {
                 setError(err.message || "Failed to fetch tasks.");
@@ -103,7 +104,10 @@ export default function MyDay() {
         <div className="min-h-screen bg-[var(--bg)] text-[var(--text)] p-6 pt-20">
             <TitleBar user={user} onLogout={handleLogout} />
             <div className="space-y-4">
-                <h1 className="text-3xl font-bold mb-4">My Day</h1>
+                <h1 className="text-3xl font-bold mb-4 inline-flex items-center gap-2">
+                    <SunMedium className="w-6 h-6" />
+                    My Day
+                </h1>
                 {error && <div className="mb-4 p-4 bg-red-100 text-red-700 border border-red-400 rounded">{error}</div>}
                 <CreateTaskForm onTaskCreated={handleTaskCreated} />
                 <TaskContainer

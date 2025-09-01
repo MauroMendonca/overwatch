@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getTasks, deleteTask, updateTask, toggleComplete } from "../services/taskService";
 import { fetchUser } from "../services/authService";
 import CreateTaskForm from "../components/CreatTaskForm";
 import TaskContainer from "../components/TaskContainer";
 import TitleBar from "../components/TitleBar";
-// ...existing code...
+import { LayoutDashboard } from "lucide-react";
 
 export default function Dashboard() {
     const token = localStorage.getItem("jwt_token");
@@ -99,7 +99,10 @@ export default function Dashboard() {
         <div className="min-h-screen bg-[var(--bg)] text-[var(--text)] p-6 pt-20">
             <TitleBar user={user} onLogout={handleLogout} />
             <div className="space-y-4">
-                <h1 className="text-3xl font-bold mb-4">Dashboard</h1>
+                <h1 className="text-3xl font-bold mb-4 inline-flex items-center gap-2">
+                    <LayoutDashboard className="w-6 h-6" />
+                    Dashboard
+                </h1>
                 <CreateTaskForm onTaskCreated={handleTaskCreated} />
                 <TaskContainer
                     tasks={tasks}

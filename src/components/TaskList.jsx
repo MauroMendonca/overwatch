@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import TaskFilter from "./TaskFilter";
 
-// ...existing code...
 export default function TaskList({ tasks = [], onDelete, onUpdate, onToggleComplete }) {
     const [selectedTask, setSelectedTask] = useState(null);
     const [completedMap, setCompletedMap] = useState({});
@@ -73,91 +73,93 @@ export default function TaskList({ tasks = [], onDelete, onUpdate, onToggleCompl
             {tasks.length === 0 ? (
                 <p className="text-sm text-[var(--muted)]">No tasks available.</p>
             ) : (
-                <ul className="space-y-3">
-                    {tasks.map((task) => {
-                        const completed = completedMap.hasOwnProperty(task._id)
-                            ? completedMap[task._id]
-                            : !!task.done;
+                <>{/*<TaskFilter onFilterChange={(filter) => {
+                        console.log("Filter changed to:", filter);
+                        // Implement filter logic if needed
+                    } } />*/}<ul className="space-y-3">
+                            {tasks.map((task) => {
+                                const completed = completedMap.hasOwnProperty(task._id)
+                                    ? completedMap[task._id]
+                                    : !!task.done;
 
-                        const formattedDate = task.date
-                            ? new Date(task.date).toLocaleDateString('pt-BR', { timeZone: 'UTC' })
-                            : "No date";
+                                const formattedDate = task.date
+                                    ? new Date(task.date).toLocaleDateString('pt-BR', { timeZone: 'UTC' })
+                                    : "No date";
 
-                        return (
-                            <li
-                                key={task._id}
-                                onClick={() => setSelectedTask({ ...task, tags: Array.isArray(task.tags) ? task.tags.join(", ") : (task.tags || "") })}
-                                className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 p-3 rounded-lg bg-[var(--panel)] border border-[var(--border)] hover:border-[var(--accent)] transition-colors cursor-pointer"
-                            >
-                                {/* left: checkbox + title (priority & tags moved below title) */}
-                                <div className="flex items-start w-full md:w-auto gap-3" onClick={(e) => e.stopPropagation()}>
-                                    <label className="flex items-start gap-3 pt-1">
-                                        <input
-                                            type="checkbox"
-                                            checked={completed}
-                                            onChange={(e) => {
-                                                e.stopPropagation();
-                                                toggleComplete(task._id, e.target.checked);
-                                            }}
-                                            className="h-6 w-6 rounded focus:ring-2 focus:ring-[var(--accent)]"
-                                            style={{ accentColor: "var(--accent)" }}
-                                            aria-label={`Marcar ${task.title} como concluída`}
-                                        />
-                                    </label>
+                                return (
+                                    <li
+                                        key={task._id}
+                                        onClick={() => setSelectedTask({ ...task, tags: Array.isArray(task.tags) ? task.tags.join(", ") : (task.tags || "") })}
+                                        className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 p-3 rounded-lg bg-[var(--panel)] border border-[var(--border)] hover:border-[var(--accent)] transition-colors cursor-pointer"
+                                    >
+                                        {/* left: checkbox + title (priority & tags moved below title) */}
+                                        <div className="flex items-start w-full md:w-auto gap-3" onClick={(e) => e.stopPropagation()}>
+                                            <label className="flex items-start gap-3 pt-1">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={completed}
+                                                    onChange={(e) => {
+                                                        e.stopPropagation();
+                                                        toggleComplete(task._id, e.target.checked);
+                                                    } }
+                                                    className="h-6 w-6 rounded focus:ring-2 focus:ring-[var(--accent)]"
+                                                    style={{ accentColor: "var(--accent)" }}
+                                                    aria-label={`Marcar ${task.title} como concluída`} />
+                                            </label>
 
-                                    <div className="min-w-0">
-                                        <h3
-                                            className={`text-sm font-medium truncate ${completed ? "line-through opacity-60" : ""}`}
-                                            style={{ color: "var(--text)" }}
-                                        >
-                                            {task.title}
-                                        </h3>
-                                        <div className="mt-1 text-xs text-[var(--muted)]">{task.description || ""}</div>
+                                            <div className="min-w-0">
+                                                <h3
+                                                    className={`text-sm font-medium truncate ${completed ? "line-through opacity-60" : ""}`}
+                                                    style={{ color: "var(--text)" }}
+                                                >
+                                                    {task.title}
+                                                </h3>
+                                                <div className="mt-1 text-xs text-[var(--muted)]">{task.description || ""}</div>
 
-                                        {/* priority + tags: moved below title */}
-                                        <div className="mt-2 flex flex-wrap items-center gap-2">
-                                            <span
-                                                className={`text-xs font-semibold px-2 py-1 rounded-full ${priorityClasses[task.priority || "medium"]}`}
-                                            >
-                                                {task.priority ? task.priority.toUpperCase() : "MEDIUM"}
-                                            </span>
-
-                                            {task.tags && task.tags.length > 0 ? (
-                                                task.tags.map((tag, idx) => (
+                                                {/* priority + tags: moved below title */}
+                                                <div className="mt-2 flex flex-wrap items-center gap-2">
                                                     <span
-                                                        key={idx}
-                                                        className="text-xs px-2 py-1 rounded-full bg-[var(--card)] text-[var(--text)] border border-[var(--border)]"
+                                                        className={`text-xs font-semibold px-2 py-1 rounded-full ${priorityClasses[task.priority || "medium"]}`}
                                                     >
-                                                        {tag}
+                                                        {task.priority ? task.priority.toUpperCase() : "MEDIUM"}
                                                     </span>
-                                                ))
-                                            ) : (
-                                                <span className="text-xs px-2 py-1 rounded-full bg-transparent text-[var(--muted)]">
-                                                    sem categorias
-                                                </span>
-                                            )}
+
+                                                    {task.tags && task.tags.length > 0 ? (
+                                                        task.tags.map((tag, idx) => (
+                                                            <span
+                                                                key={idx}
+                                                                className="text-xs px-2 py-1 rounded-full bg-[var(--card)] text-[var(--text)] border border-[var(--border)]"
+                                                            >
+                                                                {tag}
+                                                            </span>
+                                                        ))
+                                                    ) : (
+                                                        <span className="text-xs px-2 py-1 rounded-full bg-transparent text-[var(--muted)]">
+                                                            sem categorias
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
 
-                                {/* right: date + actions (stacked on mobile, inline on md) */}
-                                <div className="w-full md:w-auto flex flex-col md:flex-row items-stretch md:items-center gap-2 md:gap-3 mt-2 md:mt-0">
-                                    <div className="text-xs text-[var(--muted)] md:text-right">{formattedDate}</div>
+                                        {/* right: date + actions (stacked on mobile, inline on md) */}
+                                        <div className="w-full md:w-auto flex flex-col md:flex-row items-stretch md:items-center gap-2 md:gap-3 mt-2 md:mt-0">
+                                            <div className="text-xs text-[var(--muted)] md:text-right">{formattedDate}</div>
 
-                                    <div className="flex md:flex-col items-center gap-2">
-                                        <button
-                                            onClick={(e) => { e.stopPropagation(); onDelete && onDelete(task._id); }}
-                                            className="w-full md:w-auto text-sm px-3 py-2 rounded-md bg-red-600 hover:bg-red-700 text-white transition"
-                                            aria-label={`Deletar ${task.title}`}
-                                        >
-                                            Delete
-                                        </button>
-                                    </div>
-                                </div>
-                            </li>
-                        );
-                    })}
-                </ul>
+                                            <div className="flex md:flex-col items-center gap-2">
+                                                <button
+                                                    onClick={(e) => { e.stopPropagation(); onDelete && onDelete(task._id); } }
+                                                    className="w-full md:w-auto text-sm px-3 py-2 rounded-md bg-red-600 hover:bg-red-700 text-white transition"
+                                                    aria-label={`Deletar ${task.title}`}
+                                                >
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </li>
+                                );
+                            })}
+                        </ul></>
             )}
 
             {/* edit modal/drawer (non blocking) */}

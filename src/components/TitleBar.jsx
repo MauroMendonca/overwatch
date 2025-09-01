@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import ThemeToggle from './ThemeToggle';
 import logoMini from "../assets/logo_overwatch_mini.png";
+import { Bolt, SunMedium, LayoutDashboard  } from "lucide-react"
 
 export default function TitleBar({ user, onLogout }) {
     const [open, setOpen] = useState(false); // user menu / desktop menu toggle
@@ -12,7 +13,7 @@ export default function TitleBar({ user, onLogout }) {
 
     useEffect(() => {
         function handleOutside(e) {
-            const target = e.target; // fix: use defined variable
+            const target = e.target;
             if (wrapperRef.current && wrapperRef.current.contains(target)) return;
             if (drawerRef.current && drawerRef.current.contains(target)) return;
             if (hamburgerRef.current && hamburgerRef.current.contains(target)) return;
@@ -65,30 +66,17 @@ export default function TitleBar({ user, onLogout }) {
                             <NavLink
                                 to="/dashboard"
                                 label="Dashboard"
-                                icon={
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="h-4 w-4"
-                                        viewBox="0 0 24 24"
-                                        fill="currentColor"
-                                    >
-                                        <path d="M3 13h8V3H3v10zM3 21h8v-6H3v6zM13 21h8V11h-8v10zM13 3v6h8V3h-8z" />
-                                    </svg>
-                                }
+                                icon={<LayoutDashboard className="w-5 h-5" />}
                             />
                             <NavLink
                                 to="/myday"
                                 label="My Day"
-                                icon={
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="h-4 w-4"
-                                        viewBox="0 0 24 24"
-                                        fill="currentColor"
-                                    >
-                                        <path d="M12 2l2.09 6.26L20 9.27l-5 3.64L16.18 20 12 16.9 7.82 20 9 12.91l-5-3.64 5.91-.99L12 2z" />
-                                    </svg>
-                                }
+                                icon={<SunMedium className="w-5 h-5" />}
+                            />
+                            <NavLink
+                                to="/settings"
+                                label="Settings"
+                                icon={<Bolt className="w-5 h-5" />}
                             />
                         </nav>
 
@@ -120,30 +108,17 @@ export default function TitleBar({ user, onLogout }) {
                             <NavLink
                                 to="/dashboard"
                                 label="Dashboard"
-                                icon={
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="h-4 w-4"
-                                        viewBox="0 0 24 24"
-                                        fill="currentColor"
-                                    >
-                                        <path d="M3 13h8V3H3v10zM3 21h8v-6H3v6zM13 21h8V11h-8v10zM13 3v6h8V3h-8z" />
-                                    </svg>
-                                }
+                                icon={<LayoutDashboard className="w-5 h-5" />}
                             />
                             <NavLink
                                 to="/myday"
                                 label="My Day"
-                                icon={
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="h-4 w-4"
-                                        viewBox="0 0 24 24"
-                                        fill="currentColor"
-                                    >
-                                        <path d="M12 2l2.09 6.26L20 9.27l-5 3.64L16.18 20 12 16.9 7.82 20 9 12.91l-5-3.64 5.91-.99L12 2z" />
-                                    </svg>
-                                }
+                                icon={<SunMedium className="w-5 h-5" />}
+                            />
+                            <NavLink
+                                to="/settings"
+                                label="Settings"
+                                icon={<Bolt className="w-5 h-5" />}
                             />
                         </nav>
 
