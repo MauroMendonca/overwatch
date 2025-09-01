@@ -3,8 +3,9 @@ import TitleBar from "../components/TitleBar";
 import { useEffect, useState } from "react";
 import { fetchUser } from "../services/authService";
 import TagList from "../components/TagList";
-import { getTags } from "../services/tagService";
+import { getTags, deleteTag } from "../services/tagService";
 import CreateTagForm from "../components/CreatTagFrom";
+import TagContainer from "../components/TagContainer";
 
 export default function Settings() {
     const [user, setUser] = useState(null);
@@ -39,6 +40,11 @@ export default function Settings() {
             }
         })();
     }, []);
+
+    const handleTagDeleted = async (tagId) => {
+        setTags((prevTags) => prevTags.filter((tag) => tag._id !== tagId));
+        await deleteTag(tagId);
+    }
 
     if (loading) {
         return (
@@ -75,11 +81,11 @@ export default function Settings() {
                         <button className="px-4 py-2 bg-[var(--accent)] text-white rounded-md hover:bg-[var(--accent-dark)] transition">Adicionar Tag</button>
                     </div>*/}
                     <CreateTagForm onTagCreated={(newTag) => setTags((prev) => [...prev, newTag])} />
-                    <h3 className="text-xl font-semibold">Tags Existentes</h3>
                     {tags.length === 0 && <p className="text-[var(--muted)]">Nenhuma tag cadastrada.</p>}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <TagList tags={tags} />
-                    </div>
+                    {/*<div className="grid grid-cols-2 md:grid-cols-4 gap-4">*/}
+                    {/*<TagList tags={tags} onDelete={handleTagDeleted}/>*/}
+                    <TagContainer tags={tags} onDelete={handleTagDeleted} />
+                    {/*</div>*/}
                 </div>
             </div>
 
