@@ -51,6 +51,11 @@ export default function MyDay() {
 
     }, []);
 
+    if (!token) {
+        window.location.href = "/login";
+        return null;
+    }
+
     const handleLogout = () => {
         localStorage.removeItem("jwt_token");
         window.location.href = "/login";

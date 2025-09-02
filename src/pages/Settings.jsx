@@ -2,12 +2,13 @@ import { Bolt } from "lucide-react";
 import TitleBar from "../components/TitleBar";
 import { useEffect, useState } from "react";
 import { fetchUser } from "../services/authService";
-import TagList from "../components/TagList";
-import { getTags, deleteTag } from "../services/tagService";
+import { getTags, deleteTag , updateTag} from "../services/tagService";
 import CreateTagForm from "../components/CreatTagFrom";
 import TagContainer from "../components/TagContainer";
 
 export default function Settings() {
+    const token = localStorage.getItem("jwt_token");
+
     const [user, setUser] = useState(null);
     const [tags, setTags] = useState([]);
     const [error, setError] = useState("");
@@ -44,6 +45,18 @@ export default function Settings() {
     const handleTagDeleted = async (tagId) => {
         setTags((prevTags) => prevTags.filter((tag) => tag._id !== tagId));
         await deleteTag(tagId);
+    }
+
+    const handleTagEdited = async (tagId, updatedTag) => {
+        setTags((prevTags) =>
+            prevTags.map((tag) => (tag._id === tagId ? { ...tag, ...updatedTag } : tag))
+        );
+        await updateTag(tagId, updatedTag);
+    }
+
+    if (!token) {
+        window.location.href = "/login";
+        return null;
     }
 
     if (loading) {
@@ -84,7 +97,7 @@ export default function Settings() {
                     {tags.length === 0 && <p className="text-[var(--muted)]">Nenhuma tag cadastrada.</p>}
                     {/*<div className="grid grid-cols-2 md:grid-cols-4 gap-4">*/}
                     {/*<TagList tags={tags} onDelete={handleTagDeleted}/>*/}
-                    <TagContainer tags={tags} onDelete={handleTagDeleted} />
+                    <TagContainer tags={tags} onDelete={handleTagDeleted} onEdit={handleTagEdited}/>
                     {/*</div>*/}
                 </div>
             </div>

@@ -1,6 +1,6 @@
 import TagList from "./TagList";
 
-export default function TagContainer({ tags = [], onDelete }) {
+export default function TagContainer({ tags = [], onDelete, onEdit }) {
     if (!tags || tags.length === 0) {
         return <p className="text-[var(--muted)]">No tags available.</p>;
     }
@@ -15,6 +15,7 @@ export default function TagContainer({ tags = [], onDelete }) {
                 <TagList 
                     tags={tags}
                     onDelete={onDelete}
+                    onEdit={onEdit}
                 />
             </div>
         </section>
