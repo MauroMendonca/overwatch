@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { getTasks, deleteTask, updateTask, toggleComplete } from "../services/taskService";
 import { fetchUser } from "../services/authService";
+import { getTags } from "../services/tagService";
 import CreateTaskForm from "../components/CreatTaskForm";
 import TaskContainer from "../components/TaskContainer";
 import TitleBar from "../components/TitleBar";
 import { LayoutDashboard } from "lucide-react";
+import TaskFilter from "../components/TaskFilter";
 
 export default function Dashboard() {
     const token = localStorage.getItem("jwt_token");
@@ -13,6 +15,8 @@ export default function Dashboard() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [user, setUser] = useState(null);
+    const [availableTags, setAvailableTags] = useState([]);
+    const [filter, setFilter] = useState("all");
 
     useEffect(() => {
         async function fetchTasks() {
@@ -33,6 +37,15 @@ export default function Dashboard() {
                 setUser(u || null);
             } catch (err) {
                 console.error("Failed to fetch user data:", err);
+            }
+        })();
+
+        (async () => {
+            try {
+                const tags = await getTags();
+                setAvailableTags(tags || []);
+            } catch (err) {
+                console.error("Failed to fetch tags:", err);
             }
         })();
 
@@ -87,6 +100,18 @@ export default function Dashboard() {
         window.location.href = "/login";
     };
 
+    const filteredTasks = filter === "all" ? tasks : tasks.filter(t => {
+        if (["high", "medium", "low"].includes(filter)) {
+            return t.priority === filter;
+        }
+        if (filter === "today") {
+            const today = new Date();
+            const taskDate = new Date(t.dueDate);
+            return taskDate.toDateString() === today.toDateString();
+        }
+        return t.tags && t.tags.includes(filter);
+    });
+
     if (!token) {
         window.location.href = "/login";
         return null;
@@ -104,8 +129,9 @@ export default function Dashboard() {
                     Dashboard
                 </h1>
                 <CreateTaskForm onTaskCreated={handleTaskCreated} />
+                <TaskFilter tags={availableTags.map(t => t.name)} onFilterChange={setFilter} />
                 <TaskContainer
-                    tasks={tasks}
+                    tasks={filteredTasks}
                     onDelete={handleTaskDeleted}
                     onUpdate={handleTaskUpdated}
                     onToggleComplete={handleToggleComplete}
