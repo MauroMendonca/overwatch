@@ -7,13 +7,7 @@ export default function CreateTagForm({ onTagCreated }) {
     const [color, setColor] = useState("#ffffffff");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
-    // Placeholder function for creating a tag
-    /*async function createTag(tagData) {
-        // Simulate API call
-        return new Promise((resolve) => {
-            setTimeout(() => resolve({ id: Date.now(), ...tagData }), 1000);
-        });
-    }*/
+
     async function handleSubmit(e) {
         e.preventDefault();
         if (!name.trim()) {
@@ -39,16 +33,64 @@ export default function CreateTagForm({ onTagCreated }) {
         }
     }
     return (
-        <form onSubmit={handleSubmit} className="w-full flex flex-col gap-3 p-3 bg-[var(--panel)] border border-[var(--border)] rounded-lg shadow-md">
-            {error && <p className="text-red-500">{error}</p>}
-            <div className="flex flex-col md:flex-row md:items-center gap-2">
-                <input tabIndex={1} type="text" placeholder="Nome da tag" value={name} onChange={(e) => setName(e.target.value)} className="flex-1 p-2 border border-[var(--border)] rounded-md bg-[var(--bg)] text-[var(--text)]" />
-                <div className="flex gap-2">
-                    <input tabIndex={2} type="text" placeholder="Emoji da tag" className="w-12 h-12 p-2 border border-[var(--border)] rounded-md text-center bg-[var(--bg)] text-[var(--text)] cursor-not-allowed" value={emoji} onChange={(e) => setEmoji(e.target.value)} />
-                    <input tabIndex={3} type="color" value={color} onChange={(e) => setColor(e.target.value)} className="w-18 h-12 p-0 border-0 rounded-md" />
-                    <button type="submit" disabled={loading} className="w-full py-2 bg-[var(--accent)] text-white rounded-md hover:bg-[var(--accent-dark)] transition disabled:opacity-50">   {loading ? "Adicionando..." : "Adicionar Tag"}</button>
+        <form
+            onSubmit={handleSubmit}
+            className="w-full flex flex-col gap-4 p-4 bg-[var(--panel)] border border-[var(--border)] rounded-lg shadow-md"
+        >
+            {error && <p className="text-red-500 text-sm">{error}</p>}
+
+            <div className="flex flex-col md:flex-row md:items-center gap-3">
+                {/* TAG name */}
+                <input
+                    tabIndex={1}
+                    type="text"
+                    placeholder="TAG name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="flex-1 px-3 py-2 border border-[var(--border)] rounded-md bg-[var(--bg)] text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+                />
+
+                {/* Emoji + color + button */}
+                <div className="flex items-center gap-2">
+                    <input
+                        tabIndex={2}
+                        type="text"
+                        placeholder="😀"
+                        value={emoji}
+                        onChange={(e) => setEmoji(e.target.value)}
+                        maxLength={2}
+                        className="w-12 h-12 text-lg text-center border border-[var(--border)] rounded-md bg-[var(--bg)] text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+                    />
+
+                    <input
+                        tabIndex={3}
+                        type="color"
+                        value={color}
+                        onChange={(e) => setColor(e.target.value)}
+                        className="w-16 h-12 rounded-md cursor-pointer border border-[var(--border)]"
+                    />
+
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className="flex items-center gap-2 px-3 py-2 bg-[var(--accent)] text-white rounded-md hover:bg-[var(--accent-dark)] transition disabled:opacity-50"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            aria-hidden="true"
+                        >
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 5v14M5 12h14" />
+                        </svg>
+                        <span>TAG</span>
+                    </button>
                 </div>
             </div>
         </form>
+
     );
 }

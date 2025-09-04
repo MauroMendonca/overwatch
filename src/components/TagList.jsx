@@ -52,11 +52,13 @@ export default function TagList({ tags = [], onDelete, onEdit }) {
                         style={{
                             border: `2px solid ${tag.color}`
                         }}
-                        className="flex items-center justify-between p-2 border border-[var(--border)] rounded-md bg-[var(--bg)]"
+                        className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-2 border border-[var(--border)] rounded-md bg-[var(--bg)]"
                         onClick={() => openModal(tag)}
                     >
-                        <span>{tag.emoji}</span>
-                        <span className="text-[var(--text)]">{tag.name}</span>
+                        <span className="flex items-center gap-2">
+                            <span>{tag.emoji}</span>
+                            <span className="text-[var(--text)]">{tag.name}</span>
+                        </span>
                         <button
                             onClick={(e) => {
                                 e.stopPropagation();

@@ -5,7 +5,6 @@ export default function CreateTaskForm({ onTaskCreated }) {
     const [title, setTitle] = useState("");
     const [date, setDate] = useState("");
     const [priority, setPriority] = useState("medium");
-    // changed: keep raw input string, parse to array on submit
     const [tagsInput, setTagsInput] = useState("");
 
     async function handleSubmit(e) {
@@ -47,12 +46,12 @@ export default function CreateTaskForm({ onTaskCreated }) {
             className="w-full flex flex-col gap-3 p-3 bg-[var(--panel)] border border-[var(--border)] rounded-lg shadow-md"
         >
             {/* Title input full-width (mobile-first) */}
-            <label className="sr-only" htmlFor="task-title">Título da tarefa</label>
+            <label className="sr-only" htmlFor="task-title">Task title</label>
             <input
                 id="task-title"
                 type="text"
-                aria-label="Título da tarefa"
-                placeholder="Digite uma nova tarefa..."
+                aria-label="Task title"
+                placeholder="Enter a new task..."
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 className="w-full bg-transparent outline-none text-[var(--text)] placeholder-[var(--muted)] px-3 py-3 rounded-md border border-transparent focus:border-[var(--accent)] transition"
@@ -66,7 +65,7 @@ export default function CreateTaskForm({ onTaskCreated }) {
                     <input
                         id="task-date"
                         type="date"
-                        aria-label="Data"
+                        aria-label="Date"
                         value={date}
                         onChange={(e) => setDate(e.target.value)}
                         className="w-full px-3 py-2 rounded-md bg-[var(--card)] border border-[var(--border)] text-[var(--text)]"
@@ -74,10 +73,10 @@ export default function CreateTaskForm({ onTaskCreated }) {
                 </div>
 
                 <div className="md:col-span-1">
-                    <label className="sr-only" htmlFor="task-priority">Prioridade</label>
+                    <label className="sr-only" htmlFor="task-priority">Priority</label>
                     <select
                         id="task-priority"
-                        aria-label="Prioridade"
+                        aria-label="Priority"
                         value={priority}
                         onChange={(e) => setPriority(e.target.value)}
                         className="w-full px-3 py-2 rounded-md bg-[var(--card)] border border-[var(--border)] text-[var(--text)]"
@@ -89,12 +88,12 @@ export default function CreateTaskForm({ onTaskCreated }) {
                 </div>
 
                 <div className="md:col-span-2">
-                    <label className="sr-only" htmlFor="task-tags">Categorias</label>
+                    <label className="sr-only" htmlFor="task-tags">TAGs</label>
                     <input
                         id="task-tags"
                         type="text"
-                        aria-label="Categorias"
-                        placeholder="Tags (separadas por vírgula)"
+                        aria-label="Tags"
+                        placeholder="Tags (comma separated)"
                         value={tagsInput}
                         onChange={(e) => setTagsInput(e.target.value)}
                         className="w-full px-3 py-2 rounded-md bg-[var(--card)] border border-[var(--border)] text-[var(--text)]"
@@ -114,14 +113,14 @@ export default function CreateTaskForm({ onTaskCreated }) {
 
                 <button
                     type="submit"
-                    aria-label="Adicionar tarefa"
+                    aria-label="Add task"
                     className="w-full md:w-auto flex items-center justify-center gap-2 font-semibold px-4 py-3 rounded-md transition"
                     style={{ backgroundColor: "var(--accent)", color: "var(--btn-text)" }}
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true" style={{ color: "inherit" }}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 5v14M5 12h14" />
                     </svg>
-                    <span>Adicionar</span>
+                    <span>Task</span>
                 </button>
             </div>
         </form>
