@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import ThemeToggle from './ThemeToggle';
 import logoMini from "../assets/logo_overwatch_mini.png";
-import { Bolt, SunMedium, LayoutDashboard  } from "lucide-react"
+import { Bolt, SunMedium, LayoutDashboard, ClockAlert  } from "lucide-react"
 
 export default function TitleBar({ user, onLogout }) {
     const [open, setOpen] = useState(false); // user menu / desktop menu toggle
@@ -78,6 +78,11 @@ export default function TitleBar({ user, onLogout }) {
                                 label="Settings"
                                 icon={<Bolt className="w-5 h-5" />}
                             />
+                            <NavLink
+                                to="/latetasks"
+                                label="Late Tasks"
+                                icon={<ClockAlert className="w-5 h-5" />}
+                            />
                         </nav>
 
                         <div className="mt-6">
@@ -119,6 +124,11 @@ export default function TitleBar({ user, onLogout }) {
                                 to="/settings"
                                 label="Settings"
                                 icon={<Bolt className="w-5 h-5" />}
+                            />
+                            <NavLink
+                                to="/latetasks"
+                                label="Late Tasks"
+                                icon={<ClockAlert className="w-5 h-5" />}
                             />
                         </nav>
 
