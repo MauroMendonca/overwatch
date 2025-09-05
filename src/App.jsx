@@ -6,6 +6,7 @@ import Register from './pages/Register';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import MyDay from './pages/MyDay';
+import LateTasks from './pages/LateTasks';
 import Settings from './pages/Settings';
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/myday" element={<MyDay />} />
+          <Route path="/latetasks" element={<LateTasks />} />
           <Route path="/settings" element={<Settings />} />
 
           <Route path="*" element={<Navigate to="/login" replace />} />
