@@ -1,8 +1,8 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import ThemeToggle from './ThemeToggle';
 import logoMini from "../assets/logo_overwatch_mini.png";
-import { Bolt, SunMedium, LayoutDashboard, ClockAlert  } from "lucide-react"
+import { Bolt, SunMedium, LayoutDashboard, ClockAlert, Inbox  } from "lucide-react";
 
 export default function TitleBar({ user, onLogout }) {
     const [open, setOpen] = useState(false); // user menu / desktop menu toggle
@@ -74,14 +74,19 @@ export default function TitleBar({ user, onLogout }) {
                                 icon={<SunMedium className="w-5 h-5" />}
                             />
                             <NavLink
-                                to="/settings"
-                                label="Settings"
-                                icon={<Bolt className="w-5 h-5" />}
+                                to="/inboxpage"
+                                label="Inbox"
+                                icon={<Inbox className="w-5 h-5" />}
                             />
                             <NavLink
                                 to="/latetasks"
                                 label="Late Tasks"
                                 icon={<ClockAlert className="w-5 h-5" />}
+                            />
+                            <NavLink
+                                to="/settings"
+                                label="Settings"
+                                icon={<Bolt className="w-5 h-5" />}
                             />
                         </nav>
 
@@ -121,14 +126,19 @@ export default function TitleBar({ user, onLogout }) {
                                 icon={<SunMedium className="w-5 h-5" />}
                             />
                             <NavLink
-                                to="/settings"
-                                label="Settings"
-                                icon={<Bolt className="w-5 h-5" />}
+                                to="/inboxpage"
+                                label="Inbox"
+                                icon={<Inbox className="w-5 h-5" />}
                             />
                             <NavLink
                                 to="/latetasks"
                                 label="Late Tasks"
                                 icon={<ClockAlert className="w-5 h-5" />}
+                            />
+                            <NavLink
+                                to="/settings"
+                                label="Settings"
+                                icon={<Bolt className="w-5 h-5" />}
                             />
                         </nav>
 
