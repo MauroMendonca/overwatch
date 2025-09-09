@@ -3,6 +3,7 @@ import { createTask } from "../services/taskService";
 
 export default function CreateTaskForm({ onTaskCreated }) {
     const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
     const [date, setDate] = useState("");
     const [priority, setPriority] = useState("medium");
     const [tagsInput, setTagsInput] = useState("");
@@ -21,6 +22,7 @@ export default function CreateTaskForm({ onTaskCreated }) {
 
         const taskData = {
             title,
+            description,
             date: date ? new Date(date).toISOString() : null,
             priority,
             tags: parsedTags,
@@ -31,6 +33,7 @@ export default function CreateTaskForm({ onTaskCreated }) {
             const data = await createTask(taskData);
             onTaskCreated(data);
             setTitle("");
+            setDescription("");
             setDate("");
             setPriority("medium");
             setTagsInput("");
@@ -56,6 +59,16 @@ export default function CreateTaskForm({ onTaskCreated }) {
                 onChange={(e) => setTitle(e.target.value)}
                 className="w-full bg-transparent outline-none text-[var(--text)] placeholder-[var(--muted)] px-3 py-3 rounded-md border border-transparent focus:border-[var(--accent)] transition"
                 required
+            />
+
+            <label className="sr-only" htmlFor="task-desc">Description</label>
+            <textarea
+                id="task-desc"
+                aria-label="Task description"
+                placeholder="Add a description (optional)..."
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className="w-full min-h-[80px] resize-y bg-[var(--card)] border border-[var(--border)] text-[var(--text)] px-3 py-2 rounded-md focus:border-[var(--accent)] transition"
             />
 
             {/* compact controls: date + priority + tags */}

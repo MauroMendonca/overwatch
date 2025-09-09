@@ -49,15 +49,15 @@ export default function TaskList({ tasks = [], onDelete, onUpdate, onToggleCompl
         }
     }
 
-    function toggleImportant(taskId, value){
-        setImportantMap(prev => ({ ...prev, [taskId]: value}));
+    function toggleImportant(taskId, value) {
+        setImportantMap(prev => ({ ...prev, [taskId]: value }));
 
         const task = (tasks || []).find(t => t._id === taskId);
 
-        if (onToggleImportant){
+        if (onToggleImportant) {
             try {
                 onToggleImportant(taskId, value);
-            } catch (err){
+            } catch (err) {
                 setImportantMap(prev => ({ ...prev, [taskId]: !value }));
                 console.error("onToggleImportant failed:", err);
             }
@@ -230,6 +230,16 @@ export default function TaskList({ tasks = [], onDelete, onUpdate, onToggleCompl
                             value={selectedTask.title}
                             onChange={(e) => setSelectedTask((s) => ({ ...s, title: e.target.value }))}
                             required
+                        />
+
+                        <label className="block text-xs mb-1 mt-3" style={{ color: "var(--text)" }}>Description</label>
+                        <textarea
+                            className="w-full px-3 py-2 rounded-md bg-[var(--panel)] border border-[var(--border)] text-[var(--text)] mb-3"
+                            rows={3}
+                            value={selectedTask.description || ""}
+                            onChange={(e) =>
+                                setSelectedTask((s) => ({ ...s, description: e.target.value }))
+                            }
                         />
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
