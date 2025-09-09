@@ -8,6 +8,7 @@ import MyDay from './pages/MyDay';
 import LateTasks from './pages/LateTasks';
 import Settings from './pages/Settings';
 import InBoxPage from './pages/InBoxPage';
+import Important from './pages/Important';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -22,6 +23,7 @@ function App() {
           <Route path="/inboxpage" element={<InBoxPage />} />
           <Route path="/myday" element={<MyDay />} />
           <Route path="/latetasks" element={<LateTasks />} />
+          <Route path="/important" element={<Important />} />
           <Route path="/settings" element={<Settings />} />
 
           {/*<Route path="*" element={<Navigate to="/login" replace />} />*/}

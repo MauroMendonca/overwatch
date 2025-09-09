@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import ThemeToggle from './ThemeToggle';
 import logoMini from "../assets/logo_overwatch_mini.png";
-import { Bolt, SunMedium, LayoutDashboard, ClockAlert, Inbox  } from "lucide-react";
+import { Bolt, SunMedium, LayoutDashboard, ClockAlert, Inbox, Star  } from "lucide-react";
 
 export default function TitleBar({ user, onLogout }) {
     const [open, setOpen] = useState(false); // user menu / desktop menu toggle
@@ -79,6 +79,11 @@ export default function TitleBar({ user, onLogout }) {
                                 icon={<Inbox className="w-5 h-5" />}
                             />
                             <NavLink
+                                to="/important"
+                                label="Important"
+                                icon={<Star className="w-5 h-5" />}
+                            />
+                            <NavLink
                                 to="/latetasks"
                                 label="Late Tasks"
                                 icon={<ClockAlert className="w-5 h-5" />}
@@ -129,6 +134,11 @@ export default function TitleBar({ user, onLogout }) {
                                 to="/inboxpage"
                                 label="Inbox"
                                 icon={<Inbox className="w-5 h-5" />}
+                            />
+                            <NavLink
+                                to="/important"
+                                label="Important"
+                                icon={<Star className="w-5 h-5" />}
                             />
                             <NavLink
                                 to="/latetasks"
