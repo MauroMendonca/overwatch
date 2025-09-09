@@ -22,6 +22,11 @@ export async function toggleComplete(taskId) {
   return await apiRequest(`/tasks/toggle/${taskId}`, "PATCH", null, getToken());
 }
 
+export async function toggleImportant(taskId) {
+  console.log('Toggling importance for task:', taskId);
+  return await apiRequest(`/tasks/toggle-important/${taskId}`, "PATCH", null, getToken());
+}
+
 export async function deleteTask(taskId) {
   return await apiRequest(`/tasks/${taskId}`, "DELETE", null, getToken());
 }

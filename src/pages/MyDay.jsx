@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getTasks, deleteTask, updateTask, toggleComplete } from "../services/taskService";
+import { getTasks, deleteTask, updateTask, toggleComplete, toggleImportant } from "../services/taskService";
 import TitleBar from "../components/TitleBar";
 import { fetchUser } from "../services/authService";
 import CreateTaskForm from "../components/CreatTaskForm";
@@ -105,6 +105,23 @@ export default function MyDay() {
         }
     }
 
+    const handleToggleImportant = async (taskId, importanted) => {
+        let previous = null;
+        setTasks(prev => {
+            previous = prev;
+            return prev.map(t => (t._id === taskId ? { ...t, important: importanted} : t));
+        });
+
+        try {
+            const saved = await toggleImportant(taskId, {important: importanted});
+            setTasks(prev => prev.map(t => (t._id === saved._id ? saved : t)));
+        } catch (err) {
+            setTasks(previous);
+            setError(err.message || "Failed to update task imprtance");
+            console.error("updateTask (important) failed:", err);
+        }
+    }
+
     return (
         <div className="min-h-screen bg-[var(--bg)] text-[var(--text)] p-6 pt-20">
             <TitleBar user={user} onLogout={handleLogout} />
@@ -120,6 +137,7 @@ export default function MyDay() {
                     onDelete={handleTaskDeleted}
                     onUpdate={handleTaskUpdated}
                     onToggleComplete={handleToggleComplete}
+                    onToggleImportant={handleToggleImportant}
                 />
             </div>
         </div>

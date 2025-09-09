@@ -1,6 +1,6 @@
 import TaskList from "./TaskList";
 
-export default function TaskContainer({ tasks = [], onDelete, onUpdate, onToggleComplete }) {
+export default function TaskContainer({ tasks = [], onDelete, onUpdate, onToggleComplete, onToggleImportant }) {
     if (!tasks || tasks.length === 0) {
         return <p className="text-[var(--muted)]">No tasks available.</p>;
     }
@@ -17,6 +17,7 @@ export default function TaskContainer({ tasks = [], onDelete, onUpdate, onToggle
                     onDelete={onDelete}
                     onUpdate={onUpdate}
                     onToggleComplete={onToggleComplete}
+                    onToggleImportant={onToggleImportant}
                 />
             </div>
         </section>

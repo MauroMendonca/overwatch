@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getTasks, deleteTask, updateTask, toggleComplete } from "../services/taskService";
+import { getTasks, deleteTask, updateTask, toggleComplete, toggleImportant } from "../services/taskService";
 import { fetchUser } from "../services/authService";
 import { getTags } from "../services/tagService";
 import CreateTaskForm from "../components/CreatTaskForm";
@@ -95,6 +95,23 @@ export default function Dashboard() {
         }
     }
 
+    const handleToggleImportant = async (taskId, importanted) => {
+        let previous = null;
+        setTasks(prev => {
+            previous = prev;
+            return prev.map(t => (t._id === taskId ? { ...t, important: importanted} : t));
+        });
+
+        try {
+            const saved = await toggleImportant(taskId, {important: importanted});
+            setTasks(prev => prev.map(t => (t._id === saved._id ? saved : t)));
+        } catch (err) {
+            setTasks(previous);
+            setError(err.message || "Failed to update task imprtance");
+            console.error("updateTask (important) failed:", err);
+        }
+    }
+
     const handleLogout = () => {
         localStorage.removeItem("jwt_token");
         window.location.href = "/login";
@@ -135,6 +152,7 @@ export default function Dashboard() {
                     onDelete={handleTaskDeleted}
                     onUpdate={handleTaskUpdated}
                     onToggleComplete={handleToggleComplete}
+                    onToggleImportant={handleToggleImportant}
                 />
             </div>
         </div>

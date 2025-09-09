@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { getTags } from "../services/tagService";
+import { Star, StarOff } from "lucide-react";
 
-export default function TaskList({ tasks = [], onDelete, onUpdate, onToggleComplete }) {
+export default function TaskList({ tasks = [], onDelete, onUpdate, onToggleComplete, onToggleImportant }) {
     const [selectedTask, setSelectedTask] = useState(null);
     const [completedMap, setCompletedMap] = useState({});
+    const [importMap, setImportantMap] = useState({});
     const [availableTags, setAvailableTags] = useState([]);
 
     useEffect(() => {
@@ -43,6 +45,21 @@ export default function TaskList({ tasks = [], onDelete, onUpdate, onToggleCompl
             } catch (err) {
                 setCompletedMap(prev => ({ ...prev, [taskId]: !value }));
                 console.error("onToggleComplete failed:", err);
+            }
+        }
+    }
+
+    function toggleImportant(taskId, value){
+        setImportantMap(prev => ({ ...prev, [taskId]: value}));
+
+        const task = (tasks || []).find(t => t._id === taskId);
+
+        if (onToggleImportant){
+            try {
+                onToggleImportant(taskId, value);
+            } catch (err){
+                setImportantMap(prev => ({ ...prev, [taskId]: !value }));
+                console.error("onToggleImportant failed:", err);
             }
         }
     }
@@ -102,55 +119,71 @@ export default function TaskList({ tasks = [], onDelete, onUpdate, onToggleCompl
                         <li
                             key={task._id}
                             onClick={() => setSelectedTask({ ...task, tags: Array.isArray(task.tags) ? task.tags.join(", ") : (task.tags || "") })}
-                            className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 p-3 rounded-lg bg-[var(--panel)] border border-[var(--border)] hover:border-[var(--accent)] transition-colors cursor-pointer"
+                            className="relative flex flex-col md:flex-row items-start md:items-center justify-between gap-3 rounded-lg border p-4 hover:shadow-md"
                         >
-                            {/* left: checkbox + title (priority & tags moved below title) */}
-                            <div className="flex items-start w-full md:w-auto gap-3" onClick={(e) => e.stopPropagation()}>
-                                <label className="flex items-start gap-3 pt-1">
-                                    <input
-                                        type="checkbox"
-                                        checked={completed}
-                                        onChange={(e) => {
-                                            e.stopPropagation();
-                                            toggleComplete(task._id, e.target.checked);
-                                        }}
-                                        className="h-6 w-6 rounded focus:ring-2 focus:ring-[var(--accent)]"
-                                        style={{ accentColor: "var(--accent)" }}
-                                        aria-label={`Marcar ${task.title} como concluída`} />
-                                </label>
+                            {/* Left col checkbox + star */}
+                            <div className="flex flex-row md:flex-col items-center gap-2 h-full" onClick={(e) => e.stopPropagation()}>
+                                {/* checkbox */}
+                                <input
+                                    type="checkbox"
+                                    checked={completed}
+                                    onChange={(e) => { e.stopPropagation(); toggleComplete(task._id, e.target.checked); }}
+                                    className="h-6 w-6 rounded focus:ring-2 focus:ring-[var(--accent)] border-gray-300 text-indigo-600"
+                                    style={{ accentColor: "var(--accent)" }}
+                                    aria-label={`Marcar ${task.title} como concluída`}
+                                />
 
-                                <div className="min-w-0">
-                                    <h3
-                                        className={`text-sm font-medium truncate ${completed ? "line-through opacity-60" : ""}`}
-                                        style={{ color: "var(--text)" }}
+                                {/* star */}
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        toggleImportant(task._id, !task.important);
+                                    }}
+                                    className="text-yellow-500 hover:text-yellow-600"
+                                    aria-label="Marcar como importante"
+                                >
+                                    {task.important ? (
+                                        <Star className="w-6 h-6 fill-yellow-500" />
+                                    ) : (
+                                        <StarOff className="w-6 h-6" />
+                                    )}
+                                </button>
+
+                            </div>
+
+                            {/* midle col task title priority and tags */}
+                            <div className="flex-1 min-w-0">
+                                {/* title*/}
+                                <h3
+                                    className={`text-sm font-medium truncate ${completed ? "line-through opacity-60" : ""}`}
+                                    style={{ color: "var(--text)" }}
+                                >
+                                    {task.title}
+                                </h3>
+                                <div className="mt-1 text-xs text-[var(--muted)]">{task.description || ""}</div>
+
+                                {/* priority + tags*/}
+                                <div className="mt-2 flex flex-wrap items-center gap-2">
+                                    <span
+                                        className={`text-xs font-semibold px-2 py-1 rounded-full ${priorityClasses[task.priority || "medium"]}`}
                                     >
-                                        {task.title}
-                                    </h3>
-                                    <div className="mt-1 text-xs text-[var(--muted)]">{task.description || ""}</div>
-
-                                    {/* priority + tags*/}
-                                    <div className="mt-2 flex flex-wrap items-center gap-2">
-                                        <span
-                                            className={`text-xs font-semibold px-2 py-1 rounded-full ${priorityClasses[task.priority || "medium"]}`}
-                                        >
-                                            {task.priority ? task.priority.toUpperCase() : "MEDIUM"}
-                                        </span>
-                                        {enrichTags(task.tags).length > 0 ? (
-                                            enrichTags(task.tags).map((tag, idx) => (
-                                                <span
-                                                    key={idx}
-                                                    className="text-xs px-2 py-1 rounded-full bg-[var(--card)] text-[var(--text)]"
-                                                    style={{ border: `1px solid ${tag.color || "#cccccc"}` }}
-                                                >
-                                                    {tag.emoji ? `${tag.emoji} ` : ""}{tag.name}
-                                                </span>
-                                            ))
-                                        ) : (
-                                            <span className="text-xs px-2 py-1 rounded-full bg-transparent text-[var(--muted)]">
-                                                sem categorias
+                                        {task.priority ? task.priority.toUpperCase() : "MEDIUM"}
+                                    </span>
+                                    {enrichTags(task.tags).length > 0 ? (
+                                        enrichTags(task.tags).map((tag, idx) => (
+                                            <span
+                                                key={idx}
+                                                className="text-xs px-2 py-1 rounded-full bg-[var(--card)] text-[var(--text)]"
+                                                style={{ border: `1px solid ${tag.color || "#cccccc"}` }}
+                                            >
+                                                {tag.emoji ? `${tag.emoji} ` : ""}{tag.name}
                                             </span>
-                                        )}
-                                    </div>
+                                        ))
+                                    ) : (
+                                        <span className="text-xs px-2 py-1 rounded-full bg-transparent text-[var(--muted)]">
+                                            sem categorias
+                                        </span>
+                                    )}
                                 </div>
                             </div>
 
