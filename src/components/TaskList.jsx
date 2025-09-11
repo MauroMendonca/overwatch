@@ -155,7 +155,7 @@ export default function TaskList({ tasks = [], onDelete, onUpdate, onToggleCompl
                             <div className="flex-1 min-w-0">
                                 {/* title*/}
                                 <h3
-                                    className={`text-sm font-medium truncate ${completed ? "line-through opacity-60" : ""}`}
+                                    className={`text-sm font-medium break-words whitespace-normal ${completed ? "line-through opacity-60" : ""}`}
                                     style={{ color: "var(--text)" }}
                                 >
                                     {task.title}

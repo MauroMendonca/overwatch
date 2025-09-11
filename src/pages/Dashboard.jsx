@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getTasks, deleteTask, updateTask, toggleComplete, toggleImportant } from "../services/taskService";
+import { getTasks, deleteTask, updateTask, toggleComplete, toggleImportant, getStats } from "../services/taskService";
 import { fetchUser } from "../services/authService";
 import { getTags } from "../services/tagService";
 import CreateTaskForm from "../components/CreatTaskForm";
@@ -7,6 +7,7 @@ import TaskContainer from "../components/TaskContainer";
 import TitleBar from "../components/TitleBar";
 import { LayoutDashboard } from "lucide-react";
 import TaskFilter from "../components/TaskFilter";
+import InfoPanel from "../components/InfoPanel";
 
 export default function Dashboard() {
     const token = localStorage.getItem("jwt_token");
@@ -17,6 +18,15 @@ export default function Dashboard() {
     const [user, setUser] = useState(null);
     const [availableTags, setAvailableTags] = useState([]);
     const [filter, setFilter] = useState("all");
+
+    const [stats, setStats] = useState({
+        total: 0,
+        pending: 0,
+        completed: 0,
+        completedToday: 0,
+        overdue: 0,
+    });
+
 
     useEffect(() => {
         async function fetchTasks() {
@@ -46,6 +56,16 @@ export default function Dashboard() {
                 setAvailableTags(tags || []);
             } catch (err) {
                 console.error("Failed to fetch tags:", err);
+            }
+        })();
+
+        (async () => {
+            try {
+                const sts = await getStats();
+                setStats(sts || []);
+
+            } catch (error) {
+                console.error("Failed to fetch stats:", error);
             }
         })();
 
@@ -99,11 +119,11 @@ export default function Dashboard() {
         let previous = null;
         setTasks(prev => {
             previous = prev;
-            return prev.map(t => (t._id === taskId ? { ...t, important: importanted} : t));
+            return prev.map(t => (t._id === taskId ? { ...t, important: importanted } : t));
         });
 
         try {
-            const saved = await toggleImportant(taskId, {important: importanted});
+            const saved = await toggleImportant(taskId, { important: importanted });
             setTasks(prev => prev.map(t => (t._id === saved._id ? saved : t)));
         } catch (err) {
             setTasks(previous);
@@ -145,6 +165,7 @@ export default function Dashboard() {
                     <LayoutDashboard className="w-6 h-6" />
                     Dashboard
                 </h1>
+                <InfoPanel stats={stats} />
                 <CreateTaskForm onTaskCreated={handleTaskCreated} />
                 <TaskFilter tags={availableTags.map(t => t.name)} onFilterChange={setFilter} />
                 <TaskContainer

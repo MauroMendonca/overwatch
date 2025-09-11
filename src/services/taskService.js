@@ -18,12 +18,10 @@ export async function updateTask(taskId, taskData) {
 }
 
 export async function toggleComplete(taskId) {
-  console.log('Toggling completion for task:', taskId);
   return await apiRequest(`/tasks/toggle/${taskId}`, "PATCH", null, getToken());
 }
 
 export async function toggleImportant(taskId) {
-  console.log('Toggling importance for task:', taskId);
   return await apiRequest(`/tasks/toggle-important/${taskId}`, "PATCH", null, getToken());
 }
 
@@ -36,5 +34,9 @@ export async function clearTasks() {
 }
 
 export function getUserId() {
-    return localStorage.getItem(USER_ID);
+  return localStorage.getItem(USER_ID);
+}
+
+export async function getStats() {
+  return await apiRequest('/tasks/stats', 'GET', null, getToken());
 }
